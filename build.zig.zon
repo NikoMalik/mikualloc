@@ -1,0 +1,26 @@
+.{
+    .name = "mikualloc",
+    .version = "0.0.0",
+    .dependencies = .{
+        .mimalloc = .{
+            .url =  "https://github.com/microsoft/mimalloc/archive/refs/tags/v3.0.1.tar.gz",
+            .hash = "1220317448827e76cf944b48793b1a082eab831b7eb89d91a139d296efb1b1f77bed",
+
+
+
+        },
+
+        
+
+    },
+     .paths = .{
+
+        "build.zig",
+        "build.zig.zon",
+        
+     
+    
+   
+    },
+
+}
