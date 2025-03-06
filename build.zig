@@ -3,7 +3,7 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const upstream = b.dependency("mimalloc", .{});
     const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{ .preferred_optimize_mode = .ReleaseSafe });
+    const optimize = b.standardOptimizeOption(.{ .preferred_optimize_mode = .ReleaseFast });
     const lib = b.addStaticLibrary(.{
         .name = "mikualloc",
         .target = target,
@@ -27,6 +27,9 @@ pub fn build(b: *std.Build) void {
             "mimalloc/track.h",
         },
     });
+
+    lib.want_lto = true;
+
     lib.addCSourceFiles(.{
         .root = upstream.path("src"),
 
@@ -60,12 +63,26 @@ pub fn build(b: *std.Build) void {
             // "prim/windows/prim.c",
         },
         .flags = &.{
-            "-DNDEBUG=1",
+            "-DNDEBUG=0",
             "-DMI_SECURE=0",
             "-DMI_STAT=0",
+            "-DMI_NO_THP=1",
+            // "-DMI_ARENA_RESERVE=8",
+            "-DMI_SEGMENT_CACHE=64",
+
             "-std=gnu99",
-            "-Wall",
-            "-Wextra",
+            // "-Wall",
+            // "-Wextra",
+            "-O3",
+            "-flto",
+            "-ffast-math",
+            "-funroll-loops",
+            "-fomit-frame-pointer",
+            "-ftree-vectorize",
+            "-march=native",
+            "-fno-exceptions",
+            "-fno-unwind-tables",
+            "-fvectorize",
         },
     });
 
@@ -85,4 +102,27 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run Library test");
     test_step.dependOn(&run_unit_test.step);
+
+    //==================================//
+    //BENCH
+    //==================================//
+    const bench_exe = b.addExecutable(.{
+        .name = "bench",
+        .root_source_file = b.path("bench.zig"),
+
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+        .use_lld = true,
+    });
+    bench_exe.want_lto = true;
+
+    bench_exe.linkLibC();
+    bench_exe.linkLibrary(lib);
+    b.installArtifact(bench_exe);
+
+    const run_bench_exe = b.addRunArtifact(bench_exe);
+
+    const bench_step = b.step("bench", "Run Bench ");
+    bench_step.dependOn(&run_bench_exe.step);
 }

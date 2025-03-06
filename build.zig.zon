@@ -1,6 +1,7 @@
 .{
-    .name = "mikualloc",
+    .name = .mikualloc,
     .version = "0.0.0",
+    .fingerprint = 0xf46e2e28be89bc62, 
     .dependencies = .{
         .mimalloc = .{
             .url =  "https://github.com/microsoft/mimalloc/archive/refs/tags/v3.0.1.tar.gz",
@@ -13,6 +14,8 @@
         
 
     },
+
+
      .paths = .{
 
         "build.zig",
