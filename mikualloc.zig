@@ -99,7 +99,6 @@ const Cache = struct {
         const mask = self.free_masks[class];
         if (mask == 0) return null;
 
-        // Предвыборка следующего возможного слота
         const used_slot = @ctz(mask);
 
         @prefetch(&self.free_ptrs[class][used_slot], .{ .rw = .read, .locality = 3 });
