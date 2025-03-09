@@ -34,7 +34,7 @@ pub fn build(b: *std.Build) void {
         .root = upstream.path("src"),
 
         .files = &.{
-            "alloc-aligned.c",
+            // "alloc-aligned.c",
             // "alloc-posix.c",
             "alloc.c",
             // "alloc-override"  should inlcluded from alloc.
@@ -46,7 +46,7 @@ pub fn build(b: *std.Build) void {
             "heap.c",
             "init.c",
             "libc.c",
-            "options.c",
+            // "options.c",
             "os.c",
             // "page-map.c",
             // "page-queue.c", //this page should be included from page.c
@@ -63,26 +63,31 @@ pub fn build(b: *std.Build) void {
             // "prim/windows/prim.c",
         },
         .flags = &.{
-            "-DNDEBUG=0",
-            "-DMI_SECURE=0",
-            "-DMI_STAT=0",
-            "-DMI_NO_THP=1",
-            // "-DMI_ARENA_RESERVE=8",
-            "-DMI_SEGMENT_CACHE=64",
-
-            "-std=gnu99",
-            // "-Wall",
-            // "-Wextra",
-            "-O3",
+            //
+            "-Ofast",
             "-flto",
-            "-ffast-math",
-            "-funroll-loops",
-            "-fomit-frame-pointer",
-            "-ftree-vectorize",
+
             "-march=native",
+            "-funroll-loops",
+
+            //
+            "-DMI_SECURE=0", // 0 || 1 for debug
+            "-DMI_DEBUG=0", // 0  || 3 for debug
+            "-DMI_STAT=0", // 0   || 1 for debug
+            "-DMI_NO_THP=1",
+            "-DMIMALLOC_DECOMMIT_EXTEND=0",
+            // "-DMI_SEGMENT_CACHE=256",
+            "-DMI_PURGE_DECOMMITS=0",
+            "-DMI_LOCAL_DYNAMIC_TLS=1",
+            "-DMI_USE_ENVIRON=0",
+
             "-fno-exceptions",
             "-fno-unwind-tables",
-            "-fvectorize",
+            "-ftree-vectorize",
+            "-fno-stack-protector",
+
+            "-ffast-math",
+            "-fomit-frame-pointer",
         },
     });
 
